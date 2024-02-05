@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PieceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
@@ -28,6 +30,14 @@ class Piece
 
     #[ORM\Column]
     private ?int $moveCount = null;
+
+    #[ORM\OneToMany(mappedBy: 'piece', targetEntity: Move::class)]
+    private Collection $moves;
+
+    public function __construct()
+    {
+        $this->moves = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +100,36 @@ class Piece
     public function setMoveCount(int $moveCount): static
     {
         $this->moveCount = $moveCount;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Move>
+     */
+    public function getMoves(): Collection
+    {
+        return $this->moves;
+    }
+
+    public function addMove(Move $move): static
+    {
+        if (!$this->moves->contains($move)) {
+            $this->moves->add($move);
+            $move->setPiece($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMove(Move $move): static
+    {
+        if ($this->moves->removeElement($move)) {
+            // set the owning side to null (unless already changed)
+            if ($move->getPiece() === $this) {
+                $move->setPiece(null);
+            }
+        }
 
         return $this;
     }
