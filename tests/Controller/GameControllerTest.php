@@ -16,6 +16,6 @@ class GameControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         
         // Vérifier que la réponse contient un texte spécifique
-        $this->assertSelectorTextContains('html', 'Nouvelle partie d\'échecs démarrée avec succès !');
+        $this->assertSelectorTextContains('body', 'Nouvelle partie d\'échecs démarrée avec succès !');
     }
 }
